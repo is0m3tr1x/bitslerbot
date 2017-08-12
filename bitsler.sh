@@ -1,12 +1,14 @@
-## is0m3tr1x Bitsler Bot v1.0
+#!/bin/bash
+source config.sh
+
+## is0m3tr1x Bitsler Bot $version
 ## contact is0m3tr1x.2017@gmail.com
 ## repository https://github.com/is0m3tr1x/bitslerbot
 ## donate 1MN5MBKc7CvkXqsYpFrNmzxS6ZMCE6w4AG
 
-source "config.sh"
-
+checklogin() {
 ## check login & get balance
-if [ $token ]; then
+if [ "$token" ]; then
 echo -e "$white ###############################"
 echo -e "$white   is0m3tr1x Bitsler Bot $version"
 echo -e "$white ###############################"
@@ -20,7 +22,7 @@ curl $timeout -s 'https://www.bitsler.com/api/bet' -H 'origin: https://www.bitsl
 
 ## parse bet response and get variables
 
-if [ -s $resp1 ]; then
+if [ -s "$resp1" ]; then
 	test1=$(cat $resp1 | cut -d: -f3 | cut -d, -f1 | sed 's/"//g')
   if [ $test1 = true ]; then
 	startbal=$(cat $resp1 | cut -d: -f19 | cut -d, -f1 | sed 's/"//g')
@@ -40,6 +42,7 @@ else
 	exit 0
 fi
 
+}
 ## login confirmed now lets configure our game
 
 if [ -r $settings ]; then
@@ -79,10 +82,9 @@ if [ $streakloss -gt $(cat $oddsdb/$p.l) ]; then
 elif [ $streakwin -gt $(cat $oddsdb/$p.w) ]; then
 	echo $streakwin > $oddsdb/$p.w
 	echo "$date NEW HIGH WIN STREAK FOR ODDS $p" >> $syslog
+fi
 
-## streak threshold exceeded actions
-
-elif [ $slm -gt 0 ] && [ $streakloss = $slm ]; then
+if [ $slm -gt 0 ] && [ $streakloss = $slm ]; then
 	if [ $sla -gt 0 ]; then
 		if [ $sla = 1 ] && [ $slp ]; then
 		newbet=$(echo "$date scale=8;$lastbet + ( $lastbet * ( $slp / 100 ))" | bc)
@@ -96,13 +98,14 @@ elif [ $slm -gt 0 ] && [ $streakloss = $slm ]; then
 		elif [ $sla = 4 ] && [ $slp ]; then
 		newbet=$(echo "$date scale=8;$lastbet + ( $lastbet * ( $slp / 100 ))" | bc)
 		echo "$date STREAK LOSS REACHED $streakloss INCREASING BET ON WIN BY $slp FROM NOW ON" >> $syslog
-		elif [ $sla ] && [ !-a $slp ]; then
+		elif [ $sla ] && [ ! -a $slp ]; then
 		newbet=$base
 		echo "$date STREAK LOSS THRESHOLD OF $streakloss REACHED NO RATE DEFINED RESETTING TO BASE" >> $syslog
 		fi
 	else
 	echo "$date STREAK LOSS THRESHOLD OF $streakloss REACHED ACTION NOT DEFINED RESETTING TO BASE" >> $syslog
 	newbet=$base
+	fi
 elif [ $swm -gt 0 ] && [ $streakwin = $swm ]; then
 	if [ $swa -gt 0 ]; then
 		if [ $swa = 1 ] && [ $swp ]; then
@@ -117,13 +120,14 @@ elif [ $swm -gt 0 ] && [ $streakwin = $swm ]; then
 		elif [ $swa = 4 ] && [ $swp ]; then
 		newbet=$(echo "$date scale=8;$lastbet + ( $lastbet * ( $swp / 100 ))" | bc)
 		echo "$date STREAK WIN REACHED $streakwin INCREASING BET ON WIN BY $swp FROM NOW ON" >> $syslog
-		elif [ $swa ] && [ !-a $swp ]; then
+		elif [ $swa ] && [ ! -a $swp ]; then
 		newbet=$base
 		echo "$date STREAK WIN THRESHOLD OF $streakwin REACHED NO RATE DEFINED RESETTING TO BASE" >> $syslog
 		fi
 	else
 	echo "$date STREAK WIN THRESHOLD OF $streakwin REACHED ACTION NOT DEFINED RESETTING TO BASE" >> $syslog
 	newbet=$base
+    fi
 fi
 
 ## hi or lo condition implementation
@@ -285,6 +289,7 @@ if [ $test2 = "Insufficient" ]; then
 elif [ $test2 = "Bet" ]; then
   echo -e "$red BET AMOUNT INVALID ERROR"
 fi
+fi
 stat
 }
 
@@ -323,3 +328,4 @@ fi
 wol=2
 modifybet
 }
+checklogin
