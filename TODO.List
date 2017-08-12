@@ -1,0 +1,21 @@
+TODO...
+arguments passing to script			                  done
+bet placing and parsing				                    done
+bet adjustment calculations			                  done
+streak implementation				                      done/requires testing
+hi/lo condition implementation			              done/requires testing
+honour max bets and end argument		              done/requires testing
+integrated luck calculator total/current round	  partially done
+glue it all together				                      incomplete
+stop on win function with luck/profit factored	  incomplete
+stop on loss function with luck/profit factored   incomplete
+cycle through saved strategies			              incomplete 
+project max consecutive losses based on args	    partially complete
+auto base bet adjustment based on risk factor	    incomplete
+change seed integration				                    incomplete
+automated bet verification of previous seed       incomplete
+create a start menu				                        incomplete
+create a game finish menu			                    incomplete
+create a database of all previous rolls		        incomplete
+add support for multiple currencies		            partially complete
+add support for multiple dice sites		            incomplete
